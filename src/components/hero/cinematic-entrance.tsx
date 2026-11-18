@@ -33,30 +33,9 @@ interface PortalFeed {
 const PORTAL_FEEDS: PortalFeed[] = [
   {
     id: 'portal-1',
-    title: 'DocuSynthesizer Agent',
-    tag: '01_DOC_AUTOMATION',
-    videoSrc: '/videos/p_2.mp4',
-    mode: 'VISUAL PREVIEW',
-  },
-  {
-    id: 'portal-2',
     title: 'OmniOps Agent Core',
-    tag: '02_AGENT_CORE',
+    tag: '01_AGENT_CORE',
     videoSrc: '/videos/p_1.mp4',
-    mode: 'VISUAL PREVIEW',
-  },
-  {
-    id: 'portal-3',
-    title: 'SentinEL Diagnostic Agent',
-    tag: '03_AUTO_DIAGNOSTICS',
-    videoSrc: '/videos/p_3.mp4',
-    mode: 'VISUAL PREVIEW',
-  },
-  {
-    id: 'portal-4',
-    title: 'AetherGrid Simulation',
-    tag: '04_SIMULATION',
-    videoSrc: '/videos/p_4.mp4',
     mode: 'VISUAL PREVIEW',
   },
 ];
@@ -73,17 +52,6 @@ export function CinematicEntrance() {
   const [isSequenceComplete, setIsSequenceComplete] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [activeFeed, setActiveFeed] = useState<PortalFeed>(PORTAL_FEEDS[0]);
-
-  // Seamless 47-second playback loop for 04_SIMULATION (p_4.mp4) without React state re-rendering
-  const handleTimeUpdate = () => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (activeFeed.videoSrc.includes('p_4') && video.currentTime >= 47) {
-      video.currentTime = 0;
-      video.play().catch(() => {});
-    }
-  };
 
   // Pause video playback when hero is scrolled out of viewport to free GPU and main thread
   useEffect(() => {
@@ -204,15 +172,6 @@ export function CinematicEntrance() {
     }
   };
 
-  const switchFeed = (feed: PortalFeed) => {
-    setActiveFeed(feed);
-    if (videoRef.current) {
-      videoRef.current.src = feed.videoSrc;
-      videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {});
-    }
-  };
-
   return (
     <section
       ref={containerRef}
@@ -300,32 +259,17 @@ export function CinematicEntrance() {
               workflows, and practical AI-powered solutions that solve real-world problems.
             </p>
 
-            {/* Virtual World Feeds Selector */}
+            {/* Virtual World Active Feed Status */}
             <div className="mb-8 space-y-2">
               <span className="font-mono text-[11px] font-semibold uppercase tracking-wider text-cyan-400/80">
                 // ACTIVE PORTAL SIMULATION FEED
               </span>
-              <div className="flex flex-wrap gap-2">
-                {PORTAL_FEEDS.map((feed) => {
-                  const isActive = activeFeed.id === feed.id;
-                  return (
-                    <button
-                      key={feed.id}
-                      type="button"
-                      onClick={() => switchFeed(feed)}
-                      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-xs transition-all duration-200 ${
-                        isActive
-                          ? 'border border-cyan-400/80 bg-cyan-500/20 text-cyan-200 shadow-[0_0_15px_rgba(0,240,255,0.35)]'
-                          : 'border border-slate-800 bg-[#060b1e]/80 text-gray-400 hover:border-cyan-500/30 hover:text-white'
-                      }`}
-                    >
-                      <Radio
-                        className={`h-3 w-3 ${isActive ? 'text-cyan-400 animate-pulse' : 'text-gray-500'}`}
-                      />
-                      <span>{feed.tag}</span>
-                    </button>
-                  );
-                })}
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-lg border border-cyan-400/80 bg-cyan-500/20 px-3.5 py-1.5 font-mono text-xs text-cyan-200 shadow-[0_0_15px_rgba(0,240,255,0.35)]">
+                  <Radio className="h-3 w-3 text-cyan-400 animate-pulse" />
+                  <span className="font-semibold">{activeFeed.tag}</span>
+                  <span className="text-gray-400">// {activeFeed.title}</span>
+                </div>
               </div>
             </div>
 
@@ -376,7 +320,6 @@ export function CinematicEntrance() {
                 muted={isMuted}
                 playsInline
                 preload="metadata"
-                onTimeUpdate={handleTimeUpdate}
                 className="h-full w-full object-cover contrast-[1.02] brightness-[1.02]"
               />
 
