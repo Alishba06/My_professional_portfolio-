@@ -74,6 +74,17 @@ export function CinematicEntrance() {
   const [isMuted, setIsMuted] = useState(true);
   const [activeFeed, setActiveFeed] = useState<PortalFeed>(PORTAL_FEEDS[0]);
 
+  // Seamless 47-second playback loop for 04_SIMULATION (p_4.mp4) without React state re-rendering
+  const handleTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (activeFeed.videoSrc.includes('p_4') && video.currentTime >= 47) {
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    }
+  };
+
   // Pause video playback when hero is scrolled out of viewport to free GPU and main thread
   useEffect(() => {
     const video = videoRef.current;
@@ -365,6 +376,7 @@ export function CinematicEntrance() {
                 muted={isMuted}
                 playsInline
                 preload="metadata"
+                onTimeUpdate={handleTimeUpdate}
                 className="h-full w-full object-cover contrast-[1.02] brightness-[1.02]"
               />
 
